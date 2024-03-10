@@ -1,0 +1,41 @@
+---
+title: "Solution Ex4 Duchossois"
+author: "Clara Duchossois"
+date: "2024-03-20"
+output: html-document
+---
+
+```{r}
+library(tidyverse)
+library(tidyr)
+library(broom)
+library(ggplot2)
+```
+
+
+### Question 1: Build the linear regression model Yi = b0 + b1ti + εi and estimate b0 and b1.
+```{r}
+# Create a tibble (dataframe) containing the data collected:
+data <- tibble(
+  bpm = c(200, 195, 200, 190, 188, 180, 185, 180, 163, 170),
+  age = c(10, 20, 21, 25, 29, 30, 31, 40, 45, 50))
+
+# Building the linear regression model
+model <- lm(bpm ~ age, data = data)
+
+# Estimate coefficients b0 and b1
+b0 <- coef(model)[1]
+b1 <- coef(model)[2]
+
+# Printing coefficients
+cat("Estimated coefficients:\n")
+cat("b0 (intercept):", b0, "\n")
+cat("b1 (slope):", b1, "\n")
+
+```
+
+```{r}
+# Hypothesis testing
+summary(model)  # This provides the hypothesis testing results
+```
+
