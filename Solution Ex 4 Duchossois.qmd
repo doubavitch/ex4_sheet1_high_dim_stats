@@ -5,15 +5,18 @@ date: "2024-03-20"
 output: html-document
 ---
 
+### Loading libraries
+
 ```{r}
 library(tidyverse)
 library(tidyr)
 library(broom)
 library(ggplot2)
+library(car)
 ```
 
-
 ### Question 1: Build the linear regression model Yi = b0 + b1ti + εi and estimate b0 and b1.
+
 ```{r}
 # Create a tibble (dataframe) containing the data collected:
 data <- tibble(
@@ -22,20 +25,50 @@ data <- tibble(
 
 # Building the linear regression model
 model <- lm(bpm ~ age, data = data)
+cat("Model: linear regression model Yi = b0 + b1ti + εi\n")
 
 # Estimate coefficients b0 and b1
 b0 <- coef(model)[1]
 b1 <- coef(model)[2]
 
-# Printing coefficients
+# Printing estimated coefficients
 cat("Estimated coefficients:\n")
-cat("b0 (intercept):", b0, "\n")
-cat("b1 (slope):", b1, "\n")
+cat("b0:", b0, "\n")
+cat("b1:", b1, "\n")
 
 ```
 
 ```{r}
-# Hypothesis testing
-summary(model)  # This provides the hypothesis testing results
+# Summary of our linear model and predicted coefficients
+summary(model)
 ```
 
+### Question 2: Verify the null hypothesis H0 : b1 = 0 against the alternative H1 : b1 ≠ 0 with a significance level α = 0.05.
+
+### For this question, we offer two alternative solutions: one using a built-in hypothesis testing function in R, the other using the coefficients given earlier by the summary of the model.
+
+```{r}
+# Perform linear hypothesis test on our model. H0 : b1 = 0 (in our case i.e. age = 0)
+hypothesis <- linearHypothesis(model, "age = 0")
+
+# Print the results of the linear hypothesis test
+hypothesis
+```
+
+## Since the p-value (given by Pr(\>F)) of the test (0.0001011) is less than the value of alpha=0.05, we reject the null hypothesis.
+
+
+```{r}
+# Test the hypothesis. We first look at the p-value given by the model summary for the coefficient b1
+p_value <- summary(model)$coefficients[2, "Pr(>|t|)"]
+
+cat("Hypothesis testing:\n\n")
+cat("p-value:", p_value, "\n\n")
+
+alpha <- 0.05
+if (p_value < alpha) {
+  cat("We reject the null hypothesis.\nWe conclude that there is a significant relationship between beats per minute under stress and age.\n")
+} else {
+  cat("We accept the null hypothesis.\nWe conclude that there is no significant relationship between beats per minute under stress and age.\n")
+}
+```
